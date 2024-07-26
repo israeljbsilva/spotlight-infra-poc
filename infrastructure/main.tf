@@ -104,3 +104,26 @@ resource "aws_db_instance" "default" {
   vpc_security_group_ids = [aws_security_group.rds_sg.id]
   db_subnet_group_name   = aws_db_subnet_group.default.name
 }
+
+resource "aws_ecr_repository" "app_repository" {
+  name = "app-repo"
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+  image_tag_mutability = "MUTABLE"
+}
+
+resource "aws_secretsmanager_secret" "rds_secret" {
+  name        = "app-secrets-manager"
+  description = "APP secrets"
+}
+
+resource "aws_secretsmanager_secret_version" "rds_secret_version" {
+  secret_id     = aws_secretsmanager_secret.rds_secret.id
+  secret_string = jsonencode({
+    DB_HOST     = aws_db_instance.default.endpoint
+    DB_USER     = var.db_username
+    DB_PASSWORD = var.db_password
+    DB_NAME     = var.db_name
+  })
+}
