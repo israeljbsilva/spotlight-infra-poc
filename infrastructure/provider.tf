@@ -8,7 +8,7 @@ terraform {
   backend "s3" {
     bucket         = "poc-webapi-terraform-state-bucket"
     key            = "my-app/terraform.tfstate"
-    region         = "eu-north-1"
+    region         = "us-east-2"
     dynamodb_table = "terraform-locks"
   }
 }
